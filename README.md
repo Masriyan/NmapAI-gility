@@ -114,7 +114,7 @@ For **DursVulnNSE**:
 
 ```bash
 # Clone your repository
-git clone https://github.com/yourusername/NmapAIgility.git
+git clone https://github.com/Masriyan/NmapAIgility.git
 cd NmapAIgility
 
 # Make the script executable
