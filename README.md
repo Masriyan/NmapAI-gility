@@ -144,10 +144,7 @@ git clone https://github.com/roomkangali/DursVulnNSE
 
 ```bash
 # Fast service discovery + DursVuln (global) + DB auto-fetch
-./scripts/nmapai_gility.sh \
-  -f targets.txt \
-  -n "-sV -T4 --top-ports 2000" \
-  -D -G -U -S HIGH -O concise
+./scripts/nmapai_gility.sh   -f targets.txt   -n "-sV -T4 --top-ports 2000"   -D -G -U -S HIGH -O concise
 ```
 
 Output directory (e.g., `out_nmapai_YYYYMMDD_HHMMSS`) will contain raw scans, summaries, and (if enabled) Nikto/AI files.
@@ -170,12 +167,10 @@ Output directory (e.g., `out_nmapai_YYYYMMDD_HHMMSS`) will contain raw scans, su
 ./scripts/nmapai_gility.sh -f targets.txt -n "-sV -T4 -p 80,443,8080,8443" -D -G -U -S MEDIUM -O full
 
 # With DursVuln (local script/path):
-./scripts/nmapai_gility.sh -f targets.txt -n "-sV -Pn -p 21,22,25,80,110,143,443" \
-  -D -L ./DursVulnNSE/dursvuln.nse -P ./DursVulnNSE/database/cve-main.json -S HIGH -O concise
+./scripts/nmapai_gility.sh -f targets.txt -n "-sV -Pn -p 21,22,25,80,110,143,443"   -D -L ./DursVulnNSE/dursvuln.nse -P ./DursVulnNSE/database/cve-main.json -S HIGH -O concise
 
 # Skip Nikto and enable AI (requires OPENAI_API_KEY in env):
-OPENAI_API_KEY=sk-... ./scripts/nmapai_gility.sh \
-  -f targets.txt -n "-sC -sV -O -T4 --top-ports 1500" -K -a
+OPENAI_API_KEY=sk-... ./scripts/nmapai_gility.sh   -f targets.txt -n "-sC -sV -O -T4 --top-ports 1500" -K -a
 ```
 
 ### CLI Options
