@@ -1,430 +1,615 @@
-# NmapAIgility
+# NmapAIGility v2.0 - Enterprise Security Scanning Framework
 
-**NmapAIgility** is a powerful and flexible security scanning toolchain that integrates **Nmap**, **DursVulnNSE**, **Nikto**, and optional **AI-assisted analysis** to map attack surfaces and highlight likely risks—fast.
-
-> ⚠️ **Legal/Ethical**: Only scan systems you own or are explicitly authorized to test.
+> **Powerful, AI-Enhanced Security Assessment Tool with Advanced Vulnerability Intelligence**
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-blue)
-![Shell](https://img.shields.io/badge/Shell-bash-lightgrey)
-![Python](https://img.shields.io/badge/Python-3.9%2B-yellow)
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
+![Version](https://img.shields.io/badge/Version-2.0.0-orange)
 
 ---
 
-## Table of Contents
-- [What’s New (2025-08)](#whats-new-2025-08)
-- [Features](#features)
-- [Editions](#editions)
-- [How It Works (Diagrams)](#how-it-works-diagrams)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-  - [Bash Edition](#bash-edition)
-  - [Python Edition](#python-edition)
-- [Quick Start](#quick-start)
-- [Usage](#usage)
-  - [Bash CLI Options](#bash-cli-options)
-  - [Python CLI Options](#python-cli-options)
-  - [Environment Variables](#environment-variables)
-- [Scenarios & Full Examples](#scenarios--full-examples)
-- [Outputs](#outputs)
-- [Troubleshooting](#troubleshooting)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
+## 🚀 What's New in v2.0
+
+NmapAIGility v2.0 is a **complete rewrite** with enterprise-grade features:
+
+### **🏗️ Architecture Improvements**
+- ✅ **Modular Plugin System** - Easy to extend with custom scanners, AI providers, enrichers
+- ✅ **Async/Await Throughout** - True concurrent execution for maximum performance
+- ✅ **Clean Separation of Concerns** - Core engines, plugins, utilities properly separated
+
+### **🤖 Advanced AI Integration**
+- ✅ **Multi-Model Support** - OpenAI (GPT-4, GPT-4o), Anthropic (Claude), Ollama (local LLMs)
+- ✅ **Streaming Responses** - Real-time AI analysis output
+- ✅ **Intelligent Correlation** - AI-powered vulnerability chain analysis
+- ✅ **Context-Aware Analysis** - Enriched data for better AI insights
+
+### **🔍 Vulnerability Intelligence**
+- ✅ **NVD Integration** - Fetch CVSS scores, descriptions, references from National Vulnerability Database
+- ✅ **EPSS Scoring** - Exploit Prediction Scoring System for real-world exploit probability
+- ✅ **ExploitDB Search** - Automatic exploit availability detection
+- ✅ **Smart Prioritization** - Multi-factor risk scoring (CVSS + EPSS + exploits + exposure + age)
+
+### **📊 Enhanced Reporting**
+- ✅ **Interactive HTML Dashboard** - Beautiful charts, tables, and visualizations
+- ✅ **Multiple Formats** - JSON, Markdown, CSV, HTML
+- ✅ **Executive Summaries** - High-level security posture overview
+- ✅ **Prioritized Recommendations** - Actionable remediation steps ranked by risk
+
+### **⚙️ Smart Features**
+- ✅ **Scan Profiles** - Pre-configured profiles (quick, standard, deep, stealth)
+- ✅ **Adaptive Scanning** - Intelligent target selection based on initial discovery
+- ✅ **Configuration Management** - YAML/JSON config files, profile system
+- ✅ **Rich Progress Display** - Beautiful terminal UI with progress bars
 
 ---
 
-## What’s New (2025-08)
+## 📋 Table of Contents
 
-- **Python rewrite (`nmapai_gility.py`)** with a modern UX using **Rich** for animated progress bars:
-  - Live Nmap % via `--stats-every` parsing
-  - Per-target Nikto progress
-  - Per-chunk AI analysis progress
-- **Bash edition** hardened:
-  - Correct tokenization of `-n "<params>"` (fixes `scantype not supported`)
-  - Quote-safe Nikto runner and better logging
-- **DursVuln integration** maintained:
-  - Global or local NSE with DB refresh (`cve-main.json`) option
-- **Summaries**: CSV/JSON/Markdown outputs for quick triage
-
----
-
-## Features
-
-- **High-fidelity discovery (Nmap):** Normal / grepable / XML outputs for reliable post-processing.
-- **Local CVE enrichment (DursVulnNSE):** Use a curated `cve-main.json` database for fast, offline vuln matches.
-- **Targeted web checks (Nikto):** Only scans HTTP/HTTPS services detected by Nmap, with parallel execution.
-- **AI-assisted triage (optional):** Summarize findings and recommended actions via OpenAI (chunked).
-- **Friendly UX:** Dry-run, debug mode, colored logs, timestamped output directory, structured summaries (CSV/JSON/MD).
-- **Safety rails:** Dependency checks, robust error handling, graceful fallbacks.
-- **Cross-platform:** Bash (Linux/macOS) + Python (Linux/macOS/Windows).
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Usage](#-usage)
+- [Scan Profiles](#-scan-profiles)
+- [AI Providers](#-ai-providers)
+- [Configuration](#-configuration)
+- [Architecture](#-architecture)
+- [Examples](#-examples)
+- [API Reference](#-api-reference)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
-## Editions
+## ✨ Features
 
-- **Bash**: `scripts/nmapai_gility.sh` — portable shell pipeline with summaries and optional AI.
-- **Python**: `scripts/nmapai_gility.py` — rich TUI with animated progress bars and the same features.
+### Core Scanning
+- **Nmap Integration** - Full Nmap feature support with progress tracking
+- **Nikto Web Scanning** - Automated HTTP/HTTPS service scanning
+- **DursVuln NSE** - Local CVE enrichment (maintained from v1)
 
-You can keep both and choose per environment.
+### AI-Powered Analysis
+- **OpenAI (GPT-4, GPT-4o-mini)** - Cloud-based advanced analysis
+- **Anthropic Claude** - Alternative cloud AI with excellent security knowledge
+- **Ollama** - Local/offline LLM support (llama3.1, mistral, etc.)
+- **Streaming Mode** - Real-time AI response output
 
----
+### Vulnerability Intelligence
+- **NVD API** - CVSS scores, severity ratings, detailed descriptions
+- **EPSS API** - Real-world exploit probability metrics
+- **ExploitDB** - Public exploit availability checking
+- **Risk Scoring** - Weighted multi-factor vulnerability prioritization
 
-## How It Works (Diagrams)
+### Reporting & Outputs
+- **HTML Dashboard** - Interactive web dashboard with charts
+- **Markdown Reports** - Human-readable formatted reports
+- **JSON Export** - Machine-readable structured data
+- **CSV Export** - Spreadsheet-compatible vulnerability lists
 
-### Pipeline Flow
-```mermaid
-flowchart LR
-    A["Targets file: IP/Host/CIDR list"] --> B["Nmap scan"]
-    B -->|script:dursvuln| C["DursVulnNSE + CVE DB"]
-    B --> D["Parse & Summarize: CSV / JSON / MD"]
-    D --> E{HTTP or HTTPS detected?}
-    E -->|Yes| F["Nikto (parallel reports)"]
-    E -->|No| G["Skip Nikto"]
-    D --> H["AI analysis (optional)"]
-    F --> I["Final reports"]
-    H --> I
-    C --> I
-```
-
-### High-level Sequence
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as User
-    participant S as Orchestrator (Bash/Python)
-    participant N as Nmap
-    participant V as "DursVuln DB"
-    participant K as Nikto
-    participant A as "OpenAI (optional)"
-    U->>S: run with targets + params
-    S->>N: execute scan + DursVuln (if enabled)
-    N->>V: load cve-main.json
-    N-->>S: results + DursVuln notes
-    S->>S: summarize CSV/JSON/MD
-    S->>K: Nikto on HTTP/S services
-    K-->>S: HTML reports
-    S->>A: (optional) analysis
-    A-->>S: triage summary
-    S-->>U: output folder + reports
-```
-
-### (Example) Module Weighting
-```mermaid
-pie showData
-    title Typical runtime share (indicative)
-    "Nmap" : 60
-    "Nikto" : 25
-    "AI" : 10
-    "Post-processing" : 5
-```
-
-> The pie chart is illustrative. Actual proportions depend on scope, network conditions, and flags.
+### Operational Features
+- **Scan Profiles** - Quick, Standard, Deep, Stealth pre-configurations
+- **Config Files** - YAML/JSON configuration support
+- **Adaptive Mode** - Smart follow-up scanning based on findings
+- **Rich UI** - Beautiful terminal interface with progress tracking
 
 ---
 
-## Prerequisites
+## 🔧 Installation
 
-### Common
-- **Nmap** (7.94+ recommended)
-- **Nikto** (optional, for web checks)
-- **DursVulnNSE** (optional): NSE + `cve-main.json` DB
-- **Targets file** (one host/IP/CIDR per line; `#` comments allowed)
+### Prerequisites
 
-### Bash-only deps
-- `jq`, `awk`, `sed`, `grep`, `xargs`, `tee`, `curl` (for AI/DB download)
+**Required:**
+- Python 3.9 or higher
+- Nmap 7.94+ ([download](https://nmap.org/download.html))
 
-### Python-only deps
-- Python **3.9+**
-- `rich` and `requests`:
-  ```bash
-  python -m pip install rich requests
-  ```
+**Optional:**
+- Nikto (for web scanning)
+- DursVuln NSE (for local CVE enrichment)
 
----
-
-## Installation
+### Installation Steps
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/Masriyan/NmapAI-gility.git
 cd NmapAI-gility
 
-# Bash edition
-chmod +x scripts/nmapai_gility.sh
+# 2. Install Python dependencies
+pip install -r requirements.txt
 
-# Python edition (install deps)
-python -m pip install -U rich requests
+# Or install with setup.py
+pip install -e .
+
+# 3. Verify installation
+python nmapai_v2.py --help
 ```
 
-### Bash Edition
-```bash
-# (Debian/Ubuntu) Install base tools
-sudo apt-get update && sudo apt-get install -y nmap jq curl nikto
-```
-
-### Python Edition
-- Works on Linux/macOS/Windows.
-- Ensure **Nmap** (and **Nikto** if needed) are in your PATH.
-
-**Optional: DursVulnNSE setup**
+### System Dependencies
 
 ```bash
-# (A) Global install (simplest; use -G / --dursvuln-global)
-git clone https://github.com/roomkangali/DursVulnNSE
-cd DursVulnNSE
-chmod +x configure-dursvuln.sh
-sudo ./configure-dursvuln.sh    # installs NSE into Nmap's scripts dir
+# Debian/Ubuntu
+sudo apt-get update
+sudo apt-get install -y nmap nikto
 
-# (B) Local usage (use -L/--dursvuln-script and -P/--dursvuln-db)
-git clone https://github.com/roomkangali/DursVulnNSE
-# Optional: fetch DB or run their updater to generate ./database/cve-main.json
+# macOS (Homebrew)
+brew install nmap nikto
+
+# Windows
+# Download Nmap installer from https://nmap.org/download.html
+# Add Nmap to your system PATH
 ```
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
+
+### Basic Scan
 
 ```bash
-# Prepare a simple target list
+# Create a targets file
 echo "scanme.nmap.org" > targets.txt
 
-# Bash — fast discovery + DursVuln global + DB auto-fetch
-./scripts/nmapai_gility.sh -f targets.txt -n "-sV -T4 --top-ports 2000" -D -G -U -S HIGH -O concise
+# Run basic scan
+python nmapai_v2.py -f targets.txt
+```
 
-# Python — same idea with animated progress
-python scripts/nmapai_gility.py -f targets.txt -n "-sV -T4 --top-ports 2000" -D -G -U -S HIGH -O concise
+### Scan with AI Analysis (OpenAI)
+
+```bash
+# Set API key
+export OPENAI_API_KEY="sk-your-key-here"
+
+# Run scan with AI
+python nmapai_v2.py -f targets.txt --ai
+```
+
+### Use a Scan Profile
+
+```bash
+# Standard comprehensive scan
+python nmapai_v2.py -f targets.txt --profile standard --ai
+
+# Quick scan for rapid assessment
+python nmapai_v2.py -f targets.txt --profile quick
+
+# Deep thorough scan
+python nmapai_v2.py -f targets.txt --profile deep --ai
 ```
 
 ---
 
-## Usage
+## 📖 Usage
 
-Both editions accept similar flags; names differ slightly.
+### Command Line Options
 
-### Bash CLI Options
+```
+usage: nmapai_v2.py [-h] -f FILE [--profile {quick,standard,deep,stealth}]
+                    [--config CONFIG] [-n NMAP_PARAMS] [--adaptive]
+                    [-K] [-t THREADS] [-D] [-G] [-L DURSVULN_SCRIPT]
+                    [-P DURSVULN_DB] [-S {LOW,MEDIUM,HIGH,CRITICAL}]
+                    [-O {concise,full}] [-U] [-a]
+                    [--ai-provider {openai,anthropic,ollama}] [-m MODEL]
+                    [--ai-stream] [--ai-endpoint AI_ENDPOINT]
+                    [--no-nvd] [--no-epss] [--no-exploitdb]
+                    [--nvd-api-key NVD_API_KEY] [-o OUTPUT]
+                    [--report-formats {json,markdown,html,csv} [{json,markdown,html,csv} ...]]
+                    [-r] [-v] [--list-profiles]
+```
 
-| Option | Description |
-|-------:|-------------|
-| `-f FILE` | Target list (IP / host / CIDR). Comments `#` and blank lines ignored. |
-| `-n "PARAMS"` | Quoted Nmap params (e.g., `"-sV -T4 --top-ports 2000"`). Unicode dashes normalized. |
-| `-o DIR` | Output directory (default: `./out_nmapai_<timestamp>`). |
-| `-t NUM` | Nikto parallel threads (default `2`). |
-| `-K` | Disable Nikto stage. |
-| `-a` | Enable AI analysis (uses OpenAI). |
-| `-m MODEL` | AI model (default: env `OPENAI_MODEL` or `gpt-4o-mini`). |
-| `-D` | Enable DursVulnNSE integration in Nmap. |
-| `-G` | Use globally installed NSE (`--script dursvuln`). |
-| `-L PATH` | Path to local `dursvuln.nse` if not using `-G`. |
-| `-P PATH` | Path to `cve-main.json` database (DursVuln). |
-| `-S LEVEL` | Minimum severity `LOW|MEDIUM|HIGH|CRITICAL`. |
-| `-O MODE` | DursVuln output mode `concise|full` (default `concise`). |
-| `-U` | Update/fetch `cve-main.json` (from local updater or DB repo). |
-| `-d` | Debug mode (`set -x`). |
-| `-r` | Dry-run (print commands only; don’t execute). |
-| `-h` | Help. |
+### Key Arguments
 
-### Python CLI Options
+| Argument | Description |
+|----------|-------------|
+| `-f, --file` | **Required.** Target list file (IP/hostname/CIDR, one per line) |
+| `--profile` | Use predefined scan profile (quick/standard/deep/stealth) |
+| `--config` | Load configuration from YAML/JSON file |
+| `-n, --nmap` | Custom Nmap parameters (e.g., "-sV -T4 --top-ports 2000") |
+| `-a, --ai` | Enable AI-powered analysis |
+| `--ai-provider` | AI provider (openai/anthropic/ollama) |
+| `-o, --output` | Output directory |
+| `--list-profiles` | Show available scan profiles |
 
-| Option | Description |
-|-------:|-------------|
-| `-f / --file FILE` | Target list (IP/host/CIDR). |
-| `-n / --nmap "PARAMS"` | Quoted Nmap params (e.g., `"-sV -T4 --top-ports 2000"`). |
-| `-o / --out-dir DIR` | Output directory (default: `./out_nmapai_<timestamp>`). |
-| `-t / --threads NUM` | Nikto parallel threads (default `2`). |
-| `-K / --no-nikto` | Disable Nikto stage. |
-| `-a / --ai` | Enable AI analysis (requires `OPENAI_API_KEY`). |
-| `-m / --model` | AI model (default: env `OPENAI_MODEL` or `gpt-4o-mini`). |
-| `--ai-endpoint URL` | Chat Completions endpoint URL. |
-| `--ai-max-tokens N` | Max tokens per chunk (default `700`). |
-| `--ai-temp F` | Temperature (default `0.2`). |
-| `--ai-top-p F` | Top-p (default `1.0`). |
-| `-D / --dursvuln` | Enable DursVuln NSE. |
-| `-G / --dursvuln-global` | Use globally installed `--script=dursvuln`. |
-| `-L / --dursvuln-script PATH` | Local `dursvuln.nse`. |
-| `-P / --dursvuln-db PATH` | Path to `cve-main.json`. |
-| `-S / --dursvuln-min LVL` | `LOW|MEDIUM|HIGH|CRITICAL`. |
-| `-O / --dursvuln-output MODE` | `concise|full` (default `concise`). |
-| `-U / --dursvuln-update` | Download/refresh `cve-main.json` if needed. |
-| `-r / --dry-run` | Dry run. |
-| `-d / --debug` | Debug mode (verbose logs). |
+---
+
+## 🎯 Scan Profiles
+
+NmapAIGility v2 includes 4 pre-configured profiles:
+
+### **Quick**
+Fast reconnaissance scan
+- Nmap: `-sV -T4 --top-ports 100`
+- Nikto: Disabled
+- Enrichment: Disabled
+- AI: Disabled
+- **Use case:** Quick network discovery
+
+### **Standard** ⭐ Recommended
+Comprehensive balanced scan
+- Nmap: `-sV -sC -T4 --top-ports 1000`
+- Nikto: Enabled (3 threads)
+- Enrichment: NVD + EPSS + ExploitDB
+- AI: Enabled (OpenAI)
+- **Use case:** Regular security assessments
+
+### **Deep**
+Thorough intensive scan
+- Nmap: `-sV -sC -A -T4 -p-` (all ports)
+- Nikto: Enabled (5 threads)
+- Enrichment: All sources
+- AI: Enabled (Anthropic Claude)
+- **Use case:** In-depth pentesting
+
+### **Stealth**
+Slow evasive scan
+- Nmap: `-sS -T2 --top-ports 200 -f`
+- Nikto: Disabled
+- Enrichment: NVD only
+- AI: Disabled
+- **Use case:** Avoiding detection
+
+---
+
+## 🤖 AI Providers
+
+### OpenAI (Default)
+
+```bash
+export OPENAI_API_KEY="sk-your-key"
+python nmapai_v2.py -f targets.txt --ai --ai-provider openai -m gpt-4o-mini
+```
+
+**Supported Models:**
+- `gpt-4o` - Most capable (expensive)
+- `gpt-4o-mini` - Best value (default)
+- `gpt-4-turbo` - Previous generation
+- `gpt-3.5-turbo` - Fastest (cheapest)
+
+### Anthropic Claude
+
+```bash
+export ANTHROPIC_API_KEY="sk-ant-your-key"
+python nmapai_v2.py -f targets.txt --ai --ai-provider anthropic -m claude-3-5-sonnet-20241022
+```
+
+**Supported Models:**
+- `claude-3-5-sonnet-20241022` - Best for security analysis
+- `claude-3-opus-20240229` - Most capable
+- `claude-3-haiku-20240307` - Fastest
+
+### Ollama (Local)
+
+```bash
+# Install Ollama: https://ollama.ai/
+# Pull a model: ollama pull llama3.1:8b
+
+python nmapai_v2.py -f targets.txt --ai --ai-provider ollama -m llama3.1:8b --ai-endpoint http://localhost:11434
+```
+
+**Supported Models:**
+- `llama3.1:8b` - Recommended for security
+- `mistral:7b` - Good alternative
+- `codellama:13b` - Code-focused
+
+**Advantages:**
+- ✅ Free and private
+- ✅ No API keys required
+- ✅ Offline operation
+- ❌ Lower quality than cloud models
+
+---
+
+## ⚙️ Configuration
+
+### Configuration File
+
+Create `config.yaml`:
+
+```yaml
+nmap:
+  enabled: true
+  nmap_params: "-sV -sC -T4 --top-ports 1500"
+  adaptive_mode: true
+
+nikto:
+  enabled: true
+  concurrency: 4
+
+dursvuln:
+  enabled: true
+  use_global: true
+  min_severity: "HIGH"
+
+enrichers:
+  nvd:
+    enabled: true
+    api_key: "your-nvd-api-key"  # Optional, for faster rate limits
+  epss:
+    enabled: true
+  exploitdb:
+    enabled: true
+
+ai:
+  enabled: true
+  provider: "openai"
+  model: "gpt-4o-mini"
+  max_tokens: 2000
+  temperature: 0.2
+
+vulnerability_engine:
+  scoring_weights:
+    cvss: 0.35
+    epss: 0.25
+    exploit_available: 0.20
+    service_exposure: 0.10
+    age: 0.10
+
+reporting:
+  formats: ["json", "markdown", "html", "csv"]
+```
+
+Run with config:
+
+```bash
+python nmapai_v2.py -f targets.txt --config config.yaml
+```
 
 ### Environment Variables
 
-| Variable | Purpose | Default |
-|---------:|---------|---------|
-| `OPENAI_API_KEY` | API key for AI analysis (`-a/--ai`). | *(required if AI used)* |
-| `OPENAI_MODEL` | Model name for AI analysis. | `gpt-4o-mini` |
-| `OPENAI_ENDPOINT` | Completions endpoint URL. | `https://api.openai.com/v1/chat/completions` |
-
-> No keys are hard-coded. If AI is not enabled, OpenAI is never contacted.
-
----
-
-## Scenarios & Full Examples
-
-> Assume you created `targets.txt` with one host per line.
-
-### 1) **Nmap only** (no Nikto/AI)
-**Bash**
 ```bash
-./scripts/nmapai_gility.sh -f targets.txt -n "-sV -T4 --top-ports 200"
-```
-**Python**
-```bash
-python scripts/nmapai_gility.py -f targets.txt -n "-sV -T4 --top-ports 200"
-```
-
-### 2) **DursVuln (global NSE) + DB refresh**
-**Bash**
-```bash
-./scripts/nmapai_gility.sh -f targets.txt -n "-sV -T4 --top-ports 1000" -D -G -U -S HIGH -O concise
-```
-**Python**
-```bash
-python scripts/nmapai_gility.py -f targets.txt -n "-sV -T4 --top-ports 1000" -D -G -U -S HIGH -O concise
-```
-
-### 3) **DursVuln (local NSE)** with local DB
-**Bash**
-```bash
-./scripts/nmapai_gility.sh -f targets.txt -n "-sV -Pn -p 21,22,25,80,110,143,443" \
-  -D -L ./DursVulnNSE/dursvuln.nse -P ./DursVulnNSE/database/cve-main.json -S MEDIUM -O full
-```
-**Python**
-```bash
-python scripts/nmapai_gility.py -f targets.txt -n "-sV -Pn -p 21,22,25,80,110,143,443" \
-  -D -L ./DursVulnNSE/dursvuln.nse -P ./DursVulnNSE/database/cve-main.json -S MEDIUM -O full
-```
-
-### 4) **Nikto demo** (local web server)
-Start a simple server in another terminal:
-```bash
-python -m http.server 8000
-```
-Then run the scan:
-**Bash**
-```bash
-echo "127.0.0.1" > targets.txt
-./scripts/nmapai_gility.sh -f targets.txt -n "-sV -Pn -p 8000 --open" -t 4
-```
-**Python**
-```bash
-echo "127.0.0.1" > targets.txt
-python scripts/nmapai_gility.py -f targets.txt -n "-sV -Pn -p 8000 --open" -t 4
-```
-
-### 5) **AI triage** (requires `OPENAI_API_KEY`)
-**Bash**
-```bash
+# AI API Keys
 export OPENAI_API_KEY="sk-..."
-./scripts/nmapai_gility.sh -f targets.txt -n "-sC -sV -O -T4 --top-ports 1500" -K -a
-```
-**Python**
-```bash
-export OPENAI_API_KEY="sk-..."
-python scripts/nmapai_gility.py -f targets.txt -n "-sC -sV -O -T4 --top-ports 1500" -K -a
-```
+export ANTHROPIC_API_KEY="sk-ant-..."
 
-### 6) **Dry-run** (validate flags; no scanning)
-**Bash**
-```bash
-./scripts/nmapai_gility.sh -f targets.txt -n "-sV -T4 --top-ports 200" -r -d
-```
-**Python**
-```bash
-python scripts/nmapai_gility.py -f targets.txt -n "-sV -T4 --top-ports 200" -r -d
-```
+# NVD API Key (optional, for faster rate limits)
+export NVD_API_KEY="your-nvd-key"
 
-### 7) **Windows (PowerShell) examples**
-```powershell
-# Python edition
-python .\scripts\nmapai_gility.py -f .\targets.txt -n "-sV -T4 --top-ports 200"
-
-# Set environment variable (session)
-$env:OPENAI_API_KEY = "sk-..."
-python .\scripts\nmapai_gility.py -f .\targets.txt -n "-sV -T4 --top-ports 200" -a
-```
-
-> Tip: On Windows, ensure `nmap.exe` (and `nikto.pl` if used) are available in PATH.
-
----
-
-## Outputs
-
-Inside your timestamped output folder:
-```
-out_nmapai_YYYYMMDD_HHMMSS/
-├── nmap_results.nmap       # Human-readable Nmap output (with DursVuln lines if enabled)
-├── nmap_results.gnmap      # Grepable for post-processing
-├── nmap_results.xml        # Machine-readable XML
-├── nmap_summary.csv        # host,port,proto,service
-├── nmap_summary.json       # structured JSON of the CSV
-├── nmap_summary.md         # per-host Markdown tables
-├── dursvuln_summary.md     # extracted DursVuln findings (if enabled)
-├── nikto/                  # HTML reports (if Nikto enabled)
-├── ai_analysis.md          # AI triage notes (if AI enabled)
-└── nmap_scan.log           # Full process log
+# Custom endpoints
+export OPENAI_ENDPOINT="https://api.openai.com/v1/chat/completions"
+export OLLAMA_ENDPOINT="http://localhost:11434"
 ```
 
 ---
 
-## Troubleshooting
+## 🏗️ Architecture
 
-- **“Missing dependency”**: Install the named package (`nmap`, `jq`, `curl`, `nikto`, etc.).
-- **DursVuln not found**: Use `-G/--dursvuln-global` or `-L/--dursvuln-script` with the correct path.
-- **No `cve-main.json`**: Point to it with `-P/--dursvuln-db` or run with `-U/--dursvuln-update` to fetch.
-- **Nmap version warning**: DursVuln works best with Nmap ≥ 7.94; upgrade if possible.
-- **AI errors / HTTP 429/5xx**: Check your API key, quotas, or retry later. Review `nmap_scan.log`.
-- **Nikto skipped**: Tool only runs Nikto when Nmap finds HTTP/S ports or http-ish services.
-- **Unicode dashes**: Both editions normalize `–` / `—` to `--` in Nmap params.
+### Project Structure
+
+```
+NmapAIGility/
+├── nmapai_v2.py                    # Main entry point
+├── nmapai/                         # Core package
+│   ├── core/                       # Core engines
+│   │   ├── base_plugin.py          # Plugin base classes
+│   │   ├── scanner_manager.py      # Orchestration
+│   │   ├── vulnerability_engine.py # Risk scoring
+│   │   ├── ai_engine.py            # AI correlation
+│   │   └── report_generator.py     # Reporting
+│   ├── plugins/                    # Plugin system
+│   │   ├── scanners/               # Scanner plugins
+│   │   │   ├── nmap_scanner.py
+│   │   │   └── nikto_scanner.py
+│   │   ├── ai_providers/           # AI providers
+│   │   │   ├── openai_provider.py
+│   │   │   ├── anthropic_provider.py
+│   │   │   └── ollama_provider.py
+│   │   ├── enrichers/              # Vulnerability enrichers
+│   │   │   ├── nvd_enricher.py
+│   │   │   ├── epss_enricher.py
+│   │   │   └── exploitdb_enricher.py
+│   │   ├── reporters/              # Report generators
+│   │   └── notifiers/              # Notification plugins
+│   └── utils/                      # Utilities
+│       └── config_manager.py       # Configuration
+├── requirements.txt
+├── setup.py
+└── README_V2.md
+```
+
+### Plugin System
+
+Easily extend NmapAIGility with custom plugins:
+
+```python
+from nmapai.core.base_plugin import ScannerPlugin
+
+class CustomScanner(ScannerPlugin):
+    @property
+    def name(self) -> str:
+        return "custom_scanner"
+
+    async def validate(self) -> bool:
+        # Check if scanner is available
+        return True
+
+    async def scan(self, targets, params):
+        # Implement custom scanning logic
+        return {"results": []}
+```
 
 ---
 
-## Roadmap
+## 💡 Examples
 
-- [ ] Merge DursVuln CVE entries directly into `nmap_summary.md` with severity badges.
-- [ ] Single interactive HTML report (embed summaries + link Nikto reports).
-- [ ] Optional UDP profiles and service heuristics for web detection.
-- [ ] Pluggable exporters (SARIF, ECS, JSONL).
-
----
-
-## Contributing
-
-PRs are welcome!
+### Example 1: Standard Security Assessment
 
 ```bash
-# 1) Create a topic branch
-git checkout -b feature/YourFeature
-
-# 2) Commit
-git commit -m "feat: add awesome thing"
-
-# 3) Push
-git push origin feature/YourFeature
-
-# 4) Open a Pull Request
+python nmapai_v2.py \
+  -f corporate_assets.txt \
+  --profile standard \
+  --ai \
+  -o results/corporate_scan
 ```
 
-Please keep changes well-scoped and include samples or tests if you touch parsing logic.
+### Example 2: Deep Pentest with Custom Nmap
+
+```bash
+python nmapai_v2.py \
+  -f targets.txt \
+  -n "-sV -sC -A -T4 -p- --script vuln" \
+  --adaptive \
+  --ai \
+  --ai-provider anthropic \
+  -m claude-3-5-sonnet-20241022 \
+  -o pentest_results
+```
+
+### Example 3: Quick Scan with Local AI
+
+```bash
+# Start Ollama
+ollama serve &
+ollama pull llama3.1:8b
+
+# Run scan
+python nmapai_v2.py \
+  -f targets.txt \
+  --profile quick \
+  --ai \
+  --ai-provider ollama \
+  -m llama3.1:8b
+```
+
+### Example 4: Stealth Scan (No Web/AI)
+
+```bash
+python nmapai_v2.py \
+  -f targets.txt \
+  --profile stealth \
+  -K \
+  --no-epss \
+  --no-exploitdb
+```
+
+### Example 5: Config File + Custom Options
+
+```bash
+python nmapai_v2.py \
+  -f targets.txt \
+  --config my-config.yaml \
+  -n "-sV -T3 --top-ports 5000" \
+  --ai-stream \
+  -o custom_scan
+```
 
 ---
 
-## License
+## 📊 Output Structure
 
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE).
+```
+out_nmapai_v2_20250112_143022/
+├── nmap_results.nmap              # Nmap normal output
+├── nmap_results.gnmap             # Grepable format
+├── nmap_results.xml               # XML format
+├── nikto/                         # Nikto reports
+│   ├── 192.168.1.100_80.html
+│   └── 192.168.1.100_443.html
+├── report.json                    # Full scan data (JSON)
+├── report.md                      # Markdown report
+├── dashboard.html                 # Interactive HTML dashboard ⭐
+├── vulnerabilities.csv            # CSV export
+└── nmap_scan.log                  # Execution log
+```
+
+**Open the dashboard:**
+```bash
+# Linux/Mac
+xdg-open out_nmapai_v2_*/dashboard.html
+
+# Windows
+start out_nmapai_v2_*\dashboard.html
+```
 
 ---
 
-## Acknowledgments
+## 🐛 Troubleshooting
 
-- [Nmap](https://nmap.org/) — the bedrock of network discovery.
-- [DursVulnNSE](https://github.com/roomkangali/DursVulnNSE) and [DursVuln-Database](https://github.com/roomkangali/DursVuln-Database).
-- [Nikto](https://cirt.net/Nikto2) — classic web server checker.
-- [OpenAI](https://openai.com/) — optional AI analysis engine.
+### Common Issues
+
+**1. "Nmap not found"**
+```bash
+# Install Nmap
+sudo apt-get install nmap  # Debian/Ubuntu
+brew install nmap           # macOS
+
+# Or download from https://nmap.org/download.html
+```
+
+**2. "OPENAI_API_KEY not set"**
+```bash
+export OPENAI_API_KEY="sk-your-key"
+```
+
+**3. "NVD API rate limit exceeded"**
+```bash
+# Get free API key from https://nvd.nist.gov/developers/request-an-api-key
+python nmapai_v2.py -f targets.txt --nvd-api-key "your-key"
+```
+
+**4. "Ollama not responding"**
+```bash
+# Start Ollama
+ollama serve
+
+# Pull model
+ollama pull llama3.1:8b
+
+# Check endpoint
+curl http://localhost:11434/api/tags
+```
+
+**5. "Permission denied" errors**
+```bash
+# Some Nmap scans require root
+sudo python nmapai_v2.py -f targets.txt ...
+```
 
 ---
 
-> Questions or ideas? Open an issue or start a discussion in the repo.
+## 🤝 Contributing
+
+Contributions are welcome! Areas for improvement:
+
+- [ ] Additional scanner plugins (Masscan, Nuclei, etc.)
+- [ ] More AI providers (Google Gemini, local models)
+- [ ] PDF report generation
+- [ ] Notification plugins (Slack, Discord, Email)
+- [ ] Advanced attack chain detection
+- [ ] SARIF output format
+- [ ] Web UI for scan management
+
+**How to contribute:**
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) file.
+
+---
+
+## 🙏 Acknowledgments
+
+- **Nmap** - Gordon Lyon (Fyodor)
+- **DursVuln** - Kang Ali (roomkangali)
+- **Nikto** - CIRT.net
+- **NVD** - NIST National Vulnerability Database
+- **FIRST** - EPSS Project
+- **ExploitDB** - Offensive Security
+- **OpenAI, Anthropic, Ollama** - AI providers
+
+---
+
+## 📞 Support
+
+- **Issues:** [GitHub Issues](https://github.com/Masriyan/NmapAI-gility/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/Masriyan/NmapAI-gility/discussions)
+
+---
+
+**⚠️ Legal Notice:** Only scan systems you own or have explicit authorization to test. Unauthorized scanning is illegal.
+
+**Made with ❤️ by sudo3rs (Riyan) & Kang Ali**
