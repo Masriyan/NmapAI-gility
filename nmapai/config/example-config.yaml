@@ -1,0 +1,124 @@
+# NmapAIGility v2.0 Configuration Example
+# Copy this file and customize for your environment
+
+# Nmap Scanner Configuration
+nmap:
+  enabled: true
+  nmap_params: "-sV -sC -T4 --top-ports 1000"
+  adaptive_mode: true  # Enable intelligent follow-up scanning
+
+# Nikto Web Scanner Configuration
+nikto:
+  enabled: true
+  concurrency: 3  # Number of parallel scans
+
+# DursVuln NSE Integration
+dursvuln:
+  enabled: false
+  use_global: true  # Use globally installed NSE script
+  script_path: null  # Or specify: /path/to/dursvuln.nse
+  db_path: null  # Or specify: /path/to/cve-main.json
+  min_severity: "MEDIUM"  # LOW, MEDIUM, HIGH, CRITICAL
+  output_mode: "concise"  # concise or full
+  update: false  # Auto-update CVE database
+
+# Vulnerability Enrichment
+enrichers:
+  # National Vulnerability Database
+  nvd:
+    enabled: true
+    api_key: null  # Optional: your NVD API key for faster rate limits
+
+  # Exploit Prediction Scoring System
+  epss:
+    enabled: true
+
+  # ExploitDB Search
+  exploitdb:
+    enabled: true
+
+# AI Analysis Configuration
+ai:
+  enabled: true
+  provider: "openai"  # openai, anthropic, or ollama
+
+  # OpenAI Settings
+  model: "gpt-4o-mini"
+  endpoint: "https://api.openai.com/v1/chat/completions"
+  max_tokens: 2000
+  temperature: 0.2  # Lower = more focused, Higher = more creative
+
+  # For Anthropic Claude
+  # provider: "anthropic"
+  # model: "claude-3-5-sonnet-20241022"
+  # endpoint: "https://api.anthropic.com/v1/messages"
+
+  # For Ollama (local)
+  # provider: "ollama"
+  # model: "llama3.1:8b"
+  # endpoint: "http://localhost:11434"
+
+  # Streaming mode (real-time output)
+  stream: false
+
+  # Custom prompt (optional)
+  prompt: null
+
+# Vulnerability Risk Scoring
+vulnerability_engine:
+  scoring_weights:
+    cvss: 0.35          # CVSS base score weight
+    epss: 0.25          # Exploit probability weight
+    exploit_available: 0.20  # Public exploit availability
+    service_exposure: 0.10   # Service exposure level
+    age: 0.10           # Vulnerability age factor
+
+# Reporting Configuration
+reporting:
+  formats:
+    - json
+    - markdown
+    - html
+    - csv
+
+  # Optional: custom templates
+  templates:
+    html: null
+    markdown: null
+
+# Notification Settings (future feature)
+notifications:
+  enabled: false
+  slack:
+    webhook_url: null
+  discord:
+    webhook_url: null
+  email:
+    smtp_server: null
+    from_address: null
+    to_addresses: []
+
+# Advanced Settings
+advanced:
+  # Retry configuration
+  retry:
+    max_attempts: 3
+    backoff_factor: 2
+
+  # Timeout settings (seconds)
+  timeouts:
+    nmap: 3600
+    nikto: 1800
+    ai: 300
+    enricher: 60
+
+  # Cache settings
+  cache:
+    enabled: true
+    ttl: 3600  # seconds
+
+  # Rate limiting
+  rate_limits:
+    nvd: 0.6  # seconds between requests
+    epss: 0.5
+    exploitdb: 1.0
